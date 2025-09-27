@@ -1,6 +1,29 @@
+# Node & build artifacts
 node_modules
 dist
+
+# OS artifacts
 .DS_Store
+
+# Build output
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Local and environment directories
+.local/
+.replit
+
+# Design & large binary files - track with Git LFS or keep out of repo
+*.psd
+*.ai
+*.mp4
+*.pages
+*.docx
+*.pdf
+
+# Logs
+*.log
+
+# Attached heavy assets
+attached_assets
