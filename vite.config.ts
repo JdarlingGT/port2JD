@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+  const isAnalyze = process.env.ANALYZE === "1";
 
 export default defineConfig({
   plugins: [
@@ -11,7 +12,7 @@ export default defineConfig({
     runtimeErrorOverlay(),
     visualizer({
       filename: path.resolve(__dirname, "dist/stats.html"),
-      open: true,
+      open: isAnalyze,
       gzipSize: true,
       brotliSize: true,
     }),
