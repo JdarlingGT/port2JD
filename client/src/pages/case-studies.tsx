@@ -2,6 +2,7 @@ import { useSEO, createBreadcrumbSchema } from "@/hooks/use-seo";
 import { useState, useMemo } from "react";
 import CaseStudyCard from "@/components/CaseStudyCard";
 import caseStudiesData from "@/data/caseStudies.json";
+import CaseStudyQuickViewModal from "@/components/CaseStudyQuickViewModal";
 
 type FilterCategory = "All" | "Healthcare" | "B2B" | "Consumer";
 
@@ -10,6 +11,7 @@ const caseStudies = caseStudiesData;
 
 export default function CaseStudies() {
   const [activeFilter, setActiveFilter] = useState<FilterCategory>("All");
+  const [selectedCaseStudy, setSelectedCaseStudy] = useState<any | null>(null);
 
   // Filter case studies based on active filter
   const filteredCaseStudies = useMemo(() => {
@@ -60,7 +62,7 @@ export default function CaseStudies() {
                 className={`
                   px-6 py-3 rounded-full font-medium transition-all duration-300 ease-out
                   ${activeFilter === category
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105 font-bold'
                     : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground hover:scale-105'
                   }
                 `}
@@ -97,6 +99,7 @@ export default function CaseStudies() {
                   logo={caseStudy.logo}
                   bullets={caseStudy.bullets}
                   category={caseStudy.category}
+                  onQuickView={() => setSelectedCaseStudy(caseStudy)}
                 />
               </div>
             ))}
@@ -122,6 +125,15 @@ export default function CaseStudies() {
           </div>
         </div>
       </section>
+
+      <CaseStudyQuickViewModal 
+        caseStudy={selectedCaseStudy} 
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setSelectedCaseStudy(null);
+          }
+        }}
+      />
     </div>
   );
 }

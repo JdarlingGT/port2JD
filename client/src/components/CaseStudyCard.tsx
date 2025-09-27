@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { Eye } from "lucide-react";
 
 interface CaseStudyCardProps {
   slug: string;
@@ -9,9 +10,10 @@ interface CaseStudyCardProps {
   logo: string;
   bullets: string[];
   category: string;
+  onQuickView: () => void;
 }
 
-export default function CaseStudyCard({ slug, title, subtitle, logo, bullets, category }: CaseStudyCardProps) {
+export default function CaseStudyCard({ slug, title, subtitle, logo, bullets, category, onQuickView }: CaseStudyCardProps) {
   return (
     <Card 
       className="group hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl p-6 flex flex-col justify-between h-full bg-background border-border"
@@ -56,15 +58,23 @@ export default function CaseStudyCard({ slug, title, subtitle, logo, bullets, ca
         </ul>
       </CardContent>
       
-      <CardFooter className="pt-4">
+      <CardFooter className="pt-4 flex gap-2">
         <Button 
           asChild 
           className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
           data-testid={`button-view-case-study-${slug}`}
         >
           <Link href={`/case-studies/${slug}`}>
-            View Case Study
+            Full Details
           </Link>
+        </Button>
+        <Button 
+          variant="outline"
+          className="px-3"
+          onClick={onQuickView}
+          data-testid={`button-quick-view-${slug}`}
+        >
+          <Eye className="h-4 w-4" />
         </Button>
       </CardFooter>
     </Card>

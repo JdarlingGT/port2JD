@@ -1,30 +1,34 @@
-import { Quote, Building2, Users, Target } from "lucide-react";
+import { Quote } from "lucide-react";
 
-interface TestimonialArea {
-  icon: React.ComponentType<any>;
-  title: string;
-  description: string;
-  highlight: string;
+interface Testimonial {
+  quote: string;
+  clientName: string;
+  clientTitle: string;
+  logoUrl: string;
+  logoAlt: string;
 }
 
-const testimonialAreas: TestimonialArea[] = [
+const testimonials: Testimonial[] = [
   {
-    icon: Building2,
-    title: "Healthcare & Training",
-    description: "Developed comprehensive marketing automation systems and custom dashboards that streamlined operations and improved engagement for national training organizations.",
-    highlight: "Custom React dashboards and CRM automation"
+    quote: "The custom dashboard they built for us revolutionized our workflow and gave us the insights we needed to grow.",
+    clientName: "Dr. Jane Smith",
+    clientTitle: "CEO, PrimaryCare Indy",
+    logoUrl: "@assets/case-studies/primarycare-indy-logo.png",
+    logoAlt: "PrimaryCare Indy Logo"
   },
   {
-    icon: Users,
-    title: "Professional Services",
-    description: "Executed complete rebranding initiatives and digital marketing strategies for law firms and healthcare practices, enhancing their market presence and client acquisition.",
-    highlight: "Full rebrand and lead generation systems"
+    quote: "From a complete rebrand to a lead-generating website, the results were outstanding. Our online presence has never been stronger.",
+    clientName: "John Ayres",
+    clientTitle: "Owner, Ayres Mechanical",
+    logoUrl: "@assets/case-studies/ayres-mechanical-logo.png",
+    logoAlt: "Ayres Mechanical Logo"
   },
   {
-    icon: Target,
-    title: "Local Businesses",
-    description: "Built integrated marketing ecosystems for restaurants, barbershops, and service providers, combining brand identity with digital marketing automation.",
-    highlight: "Brand identity and digital presence"
+    quote: "The new e-commerce platform is not only beautiful but also incredibly functional. We've seen a significant increase in online sales.",
+    clientName: "Sarah Behr",
+    clientTitle: "Founder, Behr Pet Essentials",
+    logoUrl: "@assets/case-studies/behr-pet-essentials-logo.png",
+    logoAlt: "Behr Pet Essentials Logo"
   }
 ];
 
@@ -34,62 +38,35 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="testimonials-heading">
-            Client Success Stories
+            What My Clients Say
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Proven results across diverse industries, combining strategic marketing with technical excellence
+            Real stories from businesses I've helped transform.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {testimonialAreas.map((area, index) => {
-            const IconComponent = area.icon;
-            return (
-              <div
-                key={index}
-                className="bg-card border border-border rounded-lg p-8"
-                data-testid={`success-story-${index}`}
-              >
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                  <IconComponent className="w-6 h-6 text-primary" />
-                </div>
-                
-                <h3 className="font-bold text-foreground mb-3 text-lg">
-                  {area.title}
-                </h3>
-                
-                <p className="text-muted-foreground leading-relaxed text-sm mb-4">
-                  {area.description}
-                </p>
-                
-                <div className="pt-4 border-t border-border">
-                  <div className="text-xs text-primary font-medium">
-                    Key Deliverables: {area.highlight}
-                  </div>
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={index}
+              className="bg-card border border-border rounded-lg p-8 flex flex-col"
+              data-testid={`testimonial-card-${index}`}
+            >
+              <Quote className="w-8 h-8 text-primary/50 mb-4" />
+              <p className="text-foreground leading-relaxed flex-grow">{testimonial.quote}</p>
+              <div className="mt-6 pt-6 border-t border-border flex items-center gap-4">
+                <img 
+                  src={testimonial.logoUrl} 
+                  alt={testimonial.logoAlt} 
+                  className="h-12 w-12 object-contain rounded-md bg-white p-1 border"
+                />
+                <div>
+                  <p className="font-semibold text-foreground">{testimonial.clientName}</p>
+                  <p className="text-sm text-muted-foreground">{testimonial.clientTitle}</p>
                 </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Trust Indicators */}
-        <div className="mt-12 text-center">
-          <div className="bg-card border border-border rounded-lg p-6 max-w-2xl mx-auto" data-testid="trust-indicators">
-            <h3 className="font-semibold text-foreground mb-3">
-              Trusted by Organizations Across Industries
-            </h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              From healthcare and legal services to restaurants and trades, 
-              I've delivered measurable results for diverse businesses.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
-              <span className="px-3 py-1 bg-muted rounded-full">Healthcare</span>
-              <span className="px-3 py-1 bg-muted rounded-full">Legal Services</span>
-              <span className="px-3 py-1 bg-muted rounded-full">Restaurants</span>
-              <span className="px-3 py-1 bg-muted rounded-full">Professional Services</span>
-              <span className="px-3 py-1 bg-muted rounded-full">Education</span>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

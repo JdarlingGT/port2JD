@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useSEO, createBreadcrumbSchema } from "@/hooks/use-seo";
 
 interface FormData {
   name: string;
   email: string;
+  inquiryType: string;
   message: string;
 }
 
@@ -34,17 +36,20 @@ export default function Contact() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
+    inquiryType: "",
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Partial<FormData>>({});
   const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleInquiryChange = (value: string) => {
+    setFormData(prev => ({ ...prev, inquiryType: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,15 +57,19 @@ export default function Contact() {
     setIsSubmitting(true);
 
     // Basic validation
-    if (!formData.name || !formData.email || !formData.message) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all fields.",
-        variant: "destructive",
-      });
+    const newErrors: Partial<FormData> = {};
+    if (!formData.name) newErrors.name = "Name is required.";
+    if (!formData.email) newErrors.email = "Email is required.";
+    if (!formData.inquiryType) newErrors.inquiryType = "Inquiry type is required.";
+    if (!formData.message) newErrors.message = "Message is required.";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       setIsSubmitting(false);
       return;
     }
+
+    setErrors({});
 
     try {
       // Simulate form submission
@@ -72,7 +81,7 @@ export default function Contact() {
       });
       
       // Reset form
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: "", email: "", inquiryType: "", message: "" });
     } catch (error) {
       toast({
         title: "Error",
@@ -113,7 +122,9 @@ export default function Contact() {
                   placeholder="Your full name"
                   required
                   data-testid="input-name"
+                  aria-describedby="name-error"
                 />
+                {errors.name && <p id="name-error" className="text-sm text-destructive mt-1">{errors.name}</p>}
               </div>
               
               <div>
@@ -129,7 +140,26 @@ export default function Contact() {
                   placeholder="your@email.com"
                   required
                   data-testid="input-email"
+                  aria-describedby="email-error"
                 />
+                {errors.email && <p id="email-error" className="text-sm text-destructive mt-1">{errors.email}</p>}
+              </div>
+
+              <div>
+                <Label htmlFor="inquiryType" className="block text-sm font-medium text-foreground mb-2">
+                  Inquiry Type
+                </Label>
+                <Select onValueChange={handleInquiryChange} value={formData.inquiryType} required>
+                  <SelectTrigger data-testid="select-inquiry-type" aria-describedby="inquiry-type-error">
+                    <SelectValue placeholder="Select an inquiry type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Full-time">Full-time Opportunity</SelectItem>
+                    <SelectItem value="Freelance">Freelance Project</SelectItem>
+                    <SelectItem value="Consultation">Consultation</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.inquiryType && <p id="inquiry-type-error" className="text-sm text-destructive mt-1">{errors.inquiryType}</p>}
               </div>
               
               <div>
@@ -145,7 +175,9 @@ export default function Contact() {
                   placeholder="Tell me about your project or how I can help..."
                   required
                   data-testid="textarea-message"
+                  aria-describedby="message-error"
                 />
+                {errors.message && <p id="message-error" className="text-sm text-destructive mt-1">{errors.message}</p>}
               </div>
               
               <Button

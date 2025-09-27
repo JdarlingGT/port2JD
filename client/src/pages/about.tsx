@@ -1,4 +1,4 @@
-import { Layers, BusFront, TrendingUp, ChevronDown } from "lucide-react";
+import { Layers, BusFront, TrendingUp, ChevronDown, Download, Video } from "lucide-react";
 import { useState } from "react";
 import { useSEO, createPersonSchema, createBreadcrumbSchema } from "@/hooks/use-seo";
 
@@ -45,7 +45,6 @@ export default function About() {
   const [expandedNode, setExpandedNode] = useState<string | null>(null);
 
   const toggleNode = (nodeId: string) => {
-    // Always set to the clicked node (accordion behavior)
     if (expandedNode === nodeId) {
       setExpandedNode(null);
     } else {
@@ -98,14 +97,26 @@ export default function About() {
                 </p>
               </div>
               
-              <div className="lg:col-span-1 flex justify-center lg:justify-end">
-                <div className="w-48 h-64 bg-muted rounded-lg border border-border flex items-center justify-center">
-                  <div className="text-center text-muted-foreground">
-                    <div className="w-16 h-16 bg-primary/20 rounded-full mx-auto mb-3"></div>
-                    <p className="text-sm">Professional Headshot</p>
-                    <p className="text-xs">Placeholder</p>
-                  </div>
+              <div className="lg:col-span-1 flex flex-col items-center lg:items-end">
+                <div className="w-48 h-64 bg-muted rounded-lg border border-border flex items-center justify-center mb-4">
+                  <img src="/path/to/your/professional-headshot.jpg" alt="Jacob Darling Headshot" className="w-full h-full object-cover rounded-lg"/>
                 </div>
+                <a href="/path/to/your/resume.pdf" download className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                  <Download className="-ml-1 mr-2 h-5 w-5" />
+                  Download Resume
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Intro Video Section */}
+          <div className="bg-card border border-border rounded-lg p-8 mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-4 text-center">A Quick Introduction</h2>
+            <div className="aspect-w-16 aspect-h-9 bg-muted rounded-lg border border-border flex items-center justify-center">
+              {/* Placeholder for video embed */}
+              <div className="text-center text-muted-foreground">
+                <Video className="w-12 h-12 mx-auto mb-2" />
+                <p>Intro video coming soon!</p>
               </div>
             </div>
           </div>
@@ -113,7 +124,6 @@ export default function About() {
           <div className="bg-card border border-border rounded-lg p-8">
             <h2 className="text-2xl font-bold text-foreground mb-6">My Philosophy</h2>
             
-            {/* Enhanced Pull-Quote Callout Box */}
             <div className="relative bg-gradient-to-r from-primary/10 to-secondary/10 border-l-4 border-primary rounded-lg p-6 mb-8">
               <div className="absolute top-4 left-4 text-primary/30 text-6xl font-serif">"</div>
               <blockquote className="text-xl text-foreground font-medium italic ml-8 relative z-10">
@@ -160,7 +170,6 @@ export default function About() {
             <h2 className="text-2xl font-bold text-foreground mb-8 text-center">Career Journey</h2>
             
             <div className="relative max-w-3xl mx-auto">
-              {/* Vertical Line */}
               <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border"></div>
               
               {timelineNodes.map((node, index) => (
@@ -169,15 +178,12 @@ export default function About() {
                   className="relative mb-8 last:mb-0"
                   data-testid={`timeline-node-${node.id}`}
                 >
-                  {/* Timeline Dot */}
                   <div className="absolute left-6 w-4 h-4 bg-primary border-4 border-background rounded-full shadow-lg z-10"></div>
                   
-                  {/* Year Label */}
                   <div className="absolute left-12 -top-1 text-xs font-medium text-muted-foreground bg-background px-2 py-1 rounded border border-border">
                     {node.year}
                   </div>
                   
-                  {/* Content Card */}
                   <div className="ml-20">
                     <button
                       onClick={() => toggleNode(node.id)}
@@ -208,7 +214,6 @@ export default function About() {
                         />
                       </div>
                       
-                      {/* Expandable Content */}
                       <div 
                         className={`
                           overflow-hidden transition-all duration-500 ease-out

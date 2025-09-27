@@ -5,11 +5,18 @@ import {
   X, 
   Moon, 
   Sun, 
-  ArrowRight
+  ArrowRight,
+  ChevronDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
 import { megaMenuContent } from "@/lib/navigation-data";
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface NavigationProps {
   onLogoClick?: () => void;
@@ -25,6 +32,7 @@ const NAVIGATION_ITEMS = [
   { name: "Skills", href: "/skills", hasMenu: true },
   { name: "Process", href: "/process", hasMenu: true },
   { name: "Demos", href: "/demos", hasMenu: true },
+  { name: "Blog", href: "/blog", hasMenu: false },
   { name: "Contact", href: "/contact", hasMenu: true },
 ];
 
@@ -63,7 +71,7 @@ const Navigation = memo(function Navigation({ onLogoClick }: NavigationProps) {
   };
 
   return (
-    <nav className="nav-sticky">
+    <nav className="nav-sticky" role="navigation" aria-label="Main navigation">
       <div className="container">
         <div className="flex justify-between items-center h-16">
           <Link 
@@ -90,6 +98,7 @@ const Navigation = memo(function Navigation({ onLogoClick }: NavigationProps) {
               onClick={toggleTheme}
               className="p-2 rounded-md hover:bg-accent transition-colors"
               data-testid="theme-toggle"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
               {theme === "dark" ? (
                 <Sun className="h-5 w-5 text-muted-foreground hover:text-secondary" />
@@ -106,6 +115,7 @@ const Navigation = memo(function Navigation({ onLogoClick }: NavigationProps) {
               onClick={toggleTheme}
               className="p-2 rounded-md hover:bg-accent transition-colors"
               data-testid="theme-toggle-mobile"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
               {theme === "dark" ? (
                 <Sun className="h-5 w-5 text-muted-foreground" />
@@ -119,6 +129,9 @@ const Navigation = memo(function Navigation({ onLogoClick }: NavigationProps) {
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-md hover:bg-accent transition-colors"
               data-testid="mobile-menu-toggle"
+              aria-controls="mobile-menu"
+              aria-expanded={isOpen}
+              aria-label={isOpen ? "Close main menu" : "Open main menu"}
             >
               {isOpen ? <X className="h-5 w-5 text-muted-foreground" /> : <Menu className="h-5 w-5 text-muted-foreground" />}
             </Button>
@@ -146,18 +159,7 @@ const Navigation = memo(function Navigation({ onLogoClick }: NavigationProps) {
                       return (
                         <Link
                           key={itemIndex}
-                          href={activeMenu === "About" ? "/about" : 
-                                activeMenu === "Case Studies" ? "/case-studies" : 
-                                activeMenu === "Creative Design" ? "/creative-design" : 
-                                activeMenu === "Deep Dives" ? 
-                                  (item.name === "The War Room" ? "/deep-dives/war-room" :
-                                   item.name === "The Launchpad" ? "/deep-dives/launchpad" :
-                                   item.name === "The Signal" ? "/deep-dives/signal" :
-                                   "/deep-dives") :
-                                activeMenu === "Skills" ? "/skills" :
-                                activeMenu === "Process" ? "/process" :
-                                activeMenu === "Demos" ? "/demos" :
-                                activeMenu === "Contact" ? "/contact" : "#"}
+                          href={item.href}
                           className="group flex items-start gap-4 p-3 rounded-lg transition-all hover:bg-muted/50 hover:shadow-md"
                           data-testid={`menu-item-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
                         >
@@ -188,25 +190,50 @@ const Navigation = memo(function Navigation({ onLogoClick }: NavigationProps) {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-card/95 backdrop-blur-sm border-b border-border">
+        <div id="mobile-menu" className="md:hidden bg-card/95 backdrop-blur-sm border-b border-border">
           <div className="container py-4">
-            <div className="space-y-2">
-              {NAVIGATION_ITEMS.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`block px-4 py-3 text-base font-medium rounded-md transition-colors ${
-                    location === item.href
-                      ? "text-primary bg-primary/10 border-l-4 border-primary"
-                      : "text-muted-foreground hover:text-primary hover:bg-accent"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                  data-testid={`mobile-nav-${item.name.toLowerCase().replace(' ', '-')}`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
+            <Accordion type="multiple" className="w-full">
+              {NAVIGATION_ITEMS.map((item) => {
+                const hasSubMenu = item.hasMenu && megaMenuContent[item.name as keyof typeof megaMenuContent];
+                if (hasSubMenu) {
+                  return (
+                    <AccordionItem value={item.name} key={item.name}>
+                      <AccordionTrigger className="px-4 py-3 text-base font-medium text-muted-foreground hover:text-primary hover:bg-accent rounded-md w-full justify-between">
+                        {item.name}
+                      </AccordionTrigger>
+                      <AccordionContent className="pl-8 pr-4 py-2 space-y-2">
+                        {megaMenuContent[item.name as keyof typeof megaMenuContent].sections.flatMap(section => section.items).map(subItem => (
+                          <Link
+                            key={subItem.name}
+                            href={subItem.href || item.href} // Fallback to parent href
+                            className={`block py-2 text-sm font-medium rounded-md transition-colors text-muted-foreground hover:text-primary`}
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {subItem.name}
+                          </Link>
+                        ))}
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                } else {
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`block px-4 py-3 text-base font-medium rounded-md transition-colors ${
+                        location === item.href
+                          ? "text-primary bg-primary/10 border-l-4 border-primary"
+                          : "text-muted-foreground hover:text-primary hover:bg-accent"
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                      data-testid={`mobile-nav-${item.name.toLowerCase().replace(' ', '-')}`}
+                    >
+                      {item.name}
+                    </Link>
+                  );
+                }
+              })}
+            </Accordion>
           </div>
         </div>
       )}

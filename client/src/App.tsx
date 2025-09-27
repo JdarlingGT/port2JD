@@ -28,6 +28,8 @@ const DeepDives = lazy(() => import("@/pages/deep-dives"));
 const WarRoomDeepDive = lazy(() => import("@/pages/deep-dives/war-room"));
 const LaunchpadDeepDive = lazy(() => import("@/pages/deep-dives/launchpad"));
 const SignalDeepDive = lazy(() => import("@/pages/deep-dives/signal"));
+const Blog = lazy(() => import("@/pages/blog"));
+const BlogPost = lazy(() => import("@/pages/blog-post"));
 
 // Lazy load heavy components
 const EasterEggOverlay = lazy(() => import("@/components/EasterEggOverlay"));
@@ -121,6 +123,16 @@ function Router() {
           <Route path="/deep-dives/signal">
             <Suspense fallback={<PageLoader />}>
               <SignalDeepDive />
+            </Suspense>
+          </Route>
+          <Route path="/blog">
+            <Suspense fallback={<PageLoader />}>
+              <Blog />
+            </Suspense>
+          </Route>
+          <Route path="/blog/:slug">
+            <Suspense fallback={<PageLoader />}>
+              <BlogPost />
             </Suspense>
           </Route>
           <Route component={NotFound} />

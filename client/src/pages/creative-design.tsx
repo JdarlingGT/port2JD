@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSEO } from "@/hooks/use-seo";
 import { Filter, Grid, List, Eye, ExternalLink, Palette, Image, Layout, Type, Zap } from "lucide-react";
 import type { DesignProject } from "@shared/schema";
+import DesignProjectModal from "@/components/DesignProjectModal";
 
 // Define categories based on the actual data
 type DesignCategory = "Logo Design" | "Branding" | "Print Design" | "Digital Graphics" | "Web Design" | "Marketing Materials";
@@ -24,6 +25,7 @@ const getCategoryIcon = (category: string) => {
 export default function CreativeDesign() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedProject, setSelectedProject] = useState<DesignProject | null>(null);
 
   useSEO({
     title: "Creative Design Portfolio - Jacob Darling | Graphic Design & Visual Identity",
@@ -150,7 +152,7 @@ export default function CreativeDesign() {
                     </div>
 
                     {/* Action Button */}
-                    <button className="w-full btn-outline group/btn" data-testid={`view-project-${index}`}>
+                    <button onClick={() => setSelectedProject(project)} className="w-full btn-outline group/btn" data-testid={`view-project-${index}`}>
                       <Eye className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform duration-200" />
                       View Project
                     </button>
@@ -256,7 +258,7 @@ export default function CreativeDesign() {
                               <span className="text-xs text-muted-foreground">{project.year}</span>
                             </div>
                           </div>
-                          <button className="btn-outline btn-sm" data-testid={`view-list-project-${index}`}>
+                          <button onClick={() => setSelectedProject(project)} className="btn-outline btn-sm" data-testid={`view-list-project-${index}`}>
                             <Eye className="w-3 h-3 mr-1" />
                             View
                           </button>
@@ -330,7 +332,7 @@ export default function CreativeDesign() {
                         )}
                       </div>
 
-                      <button className="w-full btn-outline btn-sm group/btn" data-testid={`view-grid-project-${index}`}>
+                      <button onClick={() => setSelectedProject(project)} className="w-full btn-outline btn-sm group/btn" data-testid={`view-grid-project-${index}`}>
                         <Eye className="w-3 h-3 mr-1 group-hover/btn:scale-110 transition-transform duration-200" />
                         View Project
                       </button>
@@ -369,6 +371,15 @@ export default function CreativeDesign() {
           </div>
         </div>
       </section>
+
+      <DesignProjectModal 
+        project={selectedProject} 
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setSelectedProject(null);
+          }
+        }}
+      />
     </div>
   );
 }

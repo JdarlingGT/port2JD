@@ -31,6 +31,7 @@ interface SkillCategory {
   proficiency: number;
   color: string;
   description: string;
+  relatedProjects: { name: string; href: string }[];
 }
 
 const skillCategories: SkillCategory[] = [
@@ -39,56 +40,74 @@ const skillCategories: SkillCategory[] = [
     icon: Zap,
     proficiency: 95,
     color: "#3b82f6",
-    description: "Site speed optimization & Core Web Vitals"
+    description: "Site speed optimization & Core Web Vitals",
+    relatedProjects: [
+      { name: "Graston Technique Site", href: "/case-studies/graston-technique" },
+    ]
   },
   {
     category: "Security",
     icon: Shield,
     proficiency: 90,
     color: "#10b981",
-    description: "Infrastructure security & WAF implementation"
+    description: "Infrastructure security & WAF implementation",
+    relatedProjects: []
   },
   {
     category: "Analytics",
     icon: Activity,
     proficiency: 88,
     color: "#f59e0b",
-    description: "GA4, GTM & conversion tracking"
+    description: "GA4, GTM & conversion tracking",
+    relatedProjects: [
+      { name: "The Signal Deep Dive", href: "/deep-dives/signal" },
+    ]
   },
   {
     category: "Server Admin",
     icon: Server,
     proficiency: 85,
     color: "#ef4444",
-    description: "Linux, Apache, PHP & MySQL management"
+    description: "Linux, Apache, PHP & MySQL management",
+    relatedProjects: []
   },
   {
     category: "Development",
     icon: Code,
     proficiency: 82,
     color: "#8b5cf6",
-    description: "PHP, JavaScript & WordPress development"
+    description: "PHP, JavaScript & WordPress development",
+    relatedProjects: [
+      { name: "The War Room Deep Dive", href: "/deep-dives/war-room" },
+    ]
   },
   {
     category: "Database",
     icon: Database,
     proficiency: 80,
     color: "#06b6d4",
-    description: "SQL optimization & database design"
+    description: "SQL optimization & database design",
+    relatedProjects: []
   },
   {
     category: "Marketing Tech",
     icon: Globe,
     proficiency: 92,
     color: "#ec4899",
-    description: "CRM automation & ad platform integration"
+    description: "CRM automation & ad platform integration",
+    relatedProjects: [
+      { name: "The Launchpad Deep Dive", href: "/deep-dives/launchpad" },
+    ]
   },
   {
     category: "Strategy",
     icon: Brain,
     proficiency: 94,
     color: "#84cc16",
-    description: "Technical marketing strategy & systems thinking"
+    description: "Technical marketing strategy & systems thinking",
+    relatedProjects: [
+      { name: "View All Case Studies", href: "/case-studies" },
+    ]
   }
 ];
 
@@ -133,6 +152,8 @@ const SkillsRadarChart = memo(function SkillsRadarChart({ animated = true, showD
           `}
           onClick={() => handleCategoryClick(skill.category)}
           data-testid={`skill-category-${skill.category.toLowerCase().replace(/\s+/g, '-')}`}
+          role="button"
+          aria-pressed={isSelected}
         >
           <div className="flex items-center gap-3 w-full">
             <div 
@@ -210,6 +231,13 @@ const SkillsRadarChart = memo(function SkillsRadarChart({ animated = true, showD
               <RadarChart
                 data={skillCategories}
                 margin={{ top: 20, right: 30, bottom: 20, left: 30 }}
+                aria-label="Skills Proficiency Radar Chart"
+                onClick={(props) => {
+                  if (props && props.activePayload && props.activePayload.length > 0) {
+                    const clickedCategory = props.activePayload[0].payload.category;
+                    handleCategoryClick(clickedCategory);
+                  }
+                }}
               >
                 <PolarGrid 
                   stroke="hsl(var(--border))" 
@@ -308,7 +336,7 @@ const SkillsRadarChart = memo(function SkillsRadarChart({ animated = true, showD
 
         {/* Selected Category Detail */}
         {selectedCategory && selectedCategoryData && (
-          <div className="mt-8 p-6 bg-muted/30 rounded-xl border border-border">
+          <div className="mt-8 p-6 bg-muted/30 rounded-xl border border-border" aria-live="polite">
             {(() => {
               const categoryData = selectedCategoryData!;
               const IconComponent = categoryData.icon;
@@ -336,6 +364,22 @@ const SkillsRadarChart = memo(function SkillsRadarChart({ animated = true, showD
                     <p className="text-muted-foreground leading-relaxed">
                       {categoryData.description}
                     </p>
+                    {categoryData.relatedProjects.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-border/50">
+                        <h5 className="text-sm font-semibold mb-2">Related Projects:</h5>
+                        <div className="flex flex-wrap gap-2">
+                          {categoryData.relatedProjects.map(project => (
+                            <a 
+                              key={project.name} 
+                              href={project.href} 
+                              className="text-xs bg-primary/10 text-primary font-medium px-3 py-1 rounded-full hover:bg-primary/20 transition-colors"
+                            >
+                              {project.name}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
